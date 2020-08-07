@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SwiftUIMultiNavStack",
+        "repositoryURL": "https://github.com/devQQ/SwiftUIMultiNavStack",
+        "state": {
+          "branch": null,
+          "revision": "5b9db25cfad944317b660c173d4141f0ffedd0d1",
+          "version": "1.0.5"
+        }
+      },
+      {
+        "package": "SwiftUIToolbox",
+        "repositoryURL": "https://github.com/devQQ/SwiftUIToolbox",
+        "state": {
+          "branch": null,
+          "revision": "a489ed49e0980afaa8f2bc0b8ea644851a84624d",
+          "version": "1.4.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
