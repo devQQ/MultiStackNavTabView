@@ -58,7 +58,7 @@ public struct TabBarController: UIViewControllerRepresentable {
                     }
                     
                     guard let currentElement = self.parent.stacks.activeStack?.currentElement else {
-                        nav.popToRootViewController(animated: true)
+                        nav.popToRootViewController(animated: self.parent.animated)
                         return
                     }
                     
@@ -69,17 +69,30 @@ public struct TabBarController: UIViewControllerRepresentable {
                         
                         //This will hide the back button so it does not show up during push animation
                         currentElement.element.navigationItem.hidesBackButton = true
-                        nav.pushViewController(currentElement.element, animated: true)
+                        nav.pushViewController(currentElement.element, animated: self.parent.animated)
                     } else {
-                        nav.popToViewController(currentElement.element, animated: true)
+                        nav.popToViewController(currentElement.element, animated: self.parent.animated)
                     }
                 })
                     .store(in: &cancellable)
                 
+                nav.navigationBar.isTranslucent = parent.isTranslucent
                 nav.interactivePopGestureRecognizer?.addTarget(self, action: #selector(handlePopGesture(_:)))
                 nav.interactivePopGestureRecognizer?.delegate = nil
                 nav.interactivePopGestureRecognizer?.isEnabled = true
                 nav.delegate = self
+                
+                if parent.removeNavBarBottomLine {
+                    let appearance = UINavigationBarAppearance()
+                    appearance.configureWithOpaqueBackground()
+                    appearance.shadowImage = UIImage()
+                    appearance.shadowColor = UIColor.clear
+                    appearance.backgroundImage = UIImage()
+                    
+                    nav.navigationBar.standardAppearance = appearance
+                    nav.navigationBar.scrollEdgeAppearance = appearance
+                }
+                
             }
         }
         
@@ -98,11 +111,17 @@ public struct TabBarController: UIViewControllerRepresentable {
     public let tabs: [MultiStackNavTabView.Tab<AnyView>]
     public let viewControllers: [UIViewController]
     public let didSelectIndex: ((Int) -> Void)?
+    public let animated: Bool
+    public let isTranslucent: Bool
+    public let removeNavBarBottomLine: Bool
     
-    public init(tabs: [MultiStackNavTabView.Tab<AnyView>], viewControllers: [UIViewController], didSelectIndex: ((Int) -> Void)? = nil) {
+    public init(tabs: [MultiStackNavTabView.Tab<AnyView>], viewControllers: [UIViewController], didSelectIndex: ((Int) -> Void)? = nil, animated: Bool = true, isTranslucent: Bool = false, removeNavBarBottomLine: Bool = false) {
         self.tabs = tabs
         self.viewControllers = viewControllers
         self.didSelectIndex = didSelectIndex
+        self.animated = animated
+        self.isTranslucent = isTranslucent
+        self.removeNavBarBottomLine = removeNavBarBottomLine
     }
     
     public func makeUIViewController(context: Context) -> UITabBarController {
