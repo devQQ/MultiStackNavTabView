@@ -41,7 +41,9 @@ public struct MultiStackNavTabView: View {
     public let isTranslucent: Bool
     public let removeNavBarBottomLine: Bool
     
-    public init(tabs: [Tab<AnyView>], didSelectIndex: ((Int) -> Void)? = nil, animated: Bool = true, isTranslucent: Bool = false, removeNavBarBottomLine: Bool = false) {
+    @Binding var selectedIndex: Int
+    
+    public init(tabs: [Tab<AnyView>], didSelectIndex: ((Int) -> Void)? = nil, animated: Bool = true, isTranslucent: Bool = false, removeNavBarBottomLine: Bool = false, selectedIndex: Binding<Int>) {
         self.tabs = tabs
         self.viewControllers = tabs.map() {
             let vc = UIHostingController(rootView: $0.content)
@@ -53,10 +55,11 @@ public struct MultiStackNavTabView: View {
         self.animated = animated
         self.isTranslucent = isTranslucent
         self.removeNavBarBottomLine = removeNavBarBottomLine
+        self._selectedIndex = selectedIndex
     }
     
     public var body: some View {
-        TabBarController(tabs: self.tabs, viewControllers: viewControllers, didSelectIndex: didSelectIndex, animated: animated, isTranslucent: isTranslucent, removeNavBarBottomLine: removeNavBarBottomLine)
+        TabBarController(tabs: self.tabs, viewControllers: viewControllers, didSelectIndex: didSelectIndex, animated: animated, isTranslucent: isTranslucent, removeNavBarBottomLine: removeNavBarBottomLine, selectedIndex: self.$selectedIndex)
             .edgesIgnoringSafeArea(.bottom)
             .environmentObject(self.stacks)
     }

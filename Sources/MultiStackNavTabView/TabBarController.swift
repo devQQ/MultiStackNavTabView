@@ -1,6 +1,6 @@
 //
 //  TabBarController.swift
-//  
+//
 //
 //  Created by Q Trang on 8/6/20.
 //
@@ -115,13 +115,16 @@ public struct TabBarController: UIViewControllerRepresentable {
     public let isTranslucent: Bool
     public let removeNavBarBottomLine: Bool
     
-    public init(tabs: [MultiStackNavTabView.Tab<AnyView>], viewControllers: [UIViewController], didSelectIndex: ((Int) -> Void)? = nil, animated: Bool = true, isTranslucent: Bool = false, removeNavBarBottomLine: Bool = false) {
+    @Binding var selectedIndex: Int
+    
+    public init(tabs: [MultiStackNavTabView.Tab<AnyView>], viewControllers: [UIViewController], didSelectIndex: ((Int) -> Void)? = nil, animated: Bool = true, isTranslucent: Bool = false, removeNavBarBottomLine: Bool = false, selectedIndex: Binding<Int>) {
         self.tabs = tabs
         self.viewControllers = viewControllers
         self.didSelectIndex = didSelectIndex
         self.animated = animated
         self.isTranslucent = isTranslucent
         self.removeNavBarBottomLine = removeNavBarBottomLine
+        self._selectedIndex = selectedIndex
     }
     
     public func makeUIViewController(context: Context) -> UITabBarController {
@@ -133,8 +136,13 @@ public struct TabBarController: UIViewControllerRepresentable {
     }
     
     public func updateUIViewController(_ uiViewController: UITabBarController, context: Context) {
+        //need to setup the nav controller for the first view controller
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             context.coordinator.setupNavController(for: self.viewControllers[0], at: 0)
+        }
+
+        if uiViewController.selectedIndex != self.selectedIndex {
+            uiViewController.selectedIndex = selectedIndex
         }
     }
     
